@@ -88,23 +88,42 @@ Most AI apps pipe everything through a RAG stack — embeddings, vector search, 
 The game's universe grows from player curiosity. No training, no fine-tuning. Just a cache that fills up.
 
 ```
-┌──────────────────────────────────────────────────────────┐
-│  Nexlayer Cloud                                          │
-│                                                          │
-│  ┌────────────────────┐       ┌───────────────────────┐  │
-│  │  Game (CPU)        │       │  AI Model (GPU)       │  │
-│  │  ────────────────  │       │  ───────────────────  │  │
-│  │  Next.js 16        │──────▶│  Llama 3.1 8B         │  │
-│  │  83 hardcoded      │  only │  via Ollama           │  │
-│  │  combos + cache    │  on   │                       │  │
-│  │  NASA tracking     │  miss │  Called only for       │  │
-│  │  Rate limiting     │       │  novel combinations   │  │
-│  └────────────────────┘       └───────────────────────┘  │
-│          │                                               │
-│  ┌───────┴────────────────────────────────────────────┐  │
-│  │  https://your-app.nexlayer.ai                      │  │
-│  └────────────────────────────────────────────────────┘  │
-└──────────────────────────────────────────────────────────┘
+                    You
+                     │
+                     ▼
+              ┌─────────────┐
+              │ Claude Code │  "Deploy this to Nexlayer"
+              └──────┬──────┘
+                     │ MCP tool calls
+                     ▼
+┌──────────────────────────────────────────────────────────────────┐
+│  Nexlayer Cloud                                                  │
+│                                                                  │
+│  ┌────────────────────────────────────────────────────────────┐  │
+│  │  Nexlayer Agents                                           │  │
+│  │  ──────────────────────────────────────────────────────    │  │
+│  │  Deploy & orchestrate pods ─ Wire internal DNS networking  │  │
+│  │  Auto-heal crashed containers ─ Autoscale on traffic       │  │
+│  │  SSL certificates ─ Image registry ─ GPU scheduling        │  │
+│  │  Debug proxy ─ Shell access ─ Log streaming                │  │
+│  └─────────────────────┬──────────────────────────────────────┘  │
+│                        │ manages                                 │
+│            ┌───────────┴───────────┐                             │
+│            ▼                       ▼                             │
+│  ┌────────────────────┐  ┌───────────────────────┐              │
+│  │  Game (CPU pod)    │  │  AI Model (GPU pod)   │              │
+│  │  ────────────────  │  │  ───────────────────  │              │
+│  │  Next.js 16        │─▶│  Llama 3.1 8B         │              │
+│  │  83 hardcoded      │  │  via Ollama           │              │
+│  │  combos + cache    │  │                       │              │
+│  │  NASA tracking     │  │  Called only for       │              │
+│  │  Rate limiting     │  │  novel combinations   │              │
+│  └────────────────────┘  └───────────────────────┘              │
+│            │              only on cache miss                     │
+│  ┌─────────┴──────────────────────────────────────────────────┐ │
+│  │  https://your-app.nexlayer.ai                              │ │
+│  └────────────────────────────────────────────────────────────┘ │
+└──────────────────────────────────────────────────────────────────┘
 ```
 
 **Live data sources (no API keys needed):**
