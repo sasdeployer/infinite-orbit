@@ -66,17 +66,17 @@ add("Escape Velocity", "Escape Velocity", "\u{1F30C}", "Warp Drive", "Physics sa
 // ═══════════════════════════════════════════════
 
 // Rocket components
-add("Thrust", "Explosion", "\u{1F680}", "SLS Rocket", "The most powerful rocket ever built");
+add("Thrust", "Explosion", "\u{1F680}", "SLS Rocket", "Built to return humans to the Moon");
 add("SLS Rocket", "Burn", "\u{1F6F0}\uFE0F", "Orion Capsule", "Home for four on a Moon trip");
 add("Orion Capsule", "Trajectory", "\u{1F469}\u200D\u{1F680}", "Crew Module", "Where astronauts eat, sleep, and float");
 add("Explosion", "Burn", "\u{1F4A3}", "Staging", "Dropping weight to go faster");
 add("Staging", "SLS Rocket", "\u{1F3D7}\uFE0F", "Multi-Stage Rocket", "Stack them up, drop them off");
-add("Acceleration", "Staging", "\u26A1", "Solid Rocket Boosters", "Two million pounds of thrust in 126 seconds");
+add("Acceleration", "Staging", "\u26A1", "Solid Rocket Boosters", "3.6 million pounds of thrust each, 126 seconds");
 
 // Reentry & landing
 add("Deorbit", "Trajectory", "\u{1F525}", "Reentry", "The hottest part of coming home");
 add("Reentry", "Angle", "\u{1F4D0}", "Reentry Corridor", "Too steep you burn, too shallow you bounce");
-add("Reentry", "Velocity", "\u{1F6E1}\uFE0F", "Heat Shield", "3000\u00B0F and holding");
+add("Reentry", "Velocity", "\u{1F6E1}\uFE0F", "Heat Shield", "5,000\u00B0F and holding");
 add("Heat Shield", "Orion Capsule", "\u{1F30A}", "Splashdown", "The Pacific Ocean welcomes you home");
 add("Deorbit", "Gravity", "\u{1F4A8}", "Atmospheric Drag", "The air that slows you down");
 add("Atmospheric Drag", "Angle", "\u{1FA82}", "Parachute Deploy", "Three giant canopies saving four lives");
@@ -88,7 +88,7 @@ add("Solar Array", "Gravity", "\u{1F31E}", "Solar Orbit", "Dancing with the Sun"
 
 // Communication
 add("Acceleration", "Vector", "\u{1F4E1}", "Ground Station", "Houston, we hear you");
-add("Lunar Flyby", "Orbit", "\u{1F4F5}", "Communication Blackout", "The loneliest 47 minutes in space");
+add("Lunar Flyby", "Orbit", "\u{1F4F5}", "Communication Blackout", "The loneliest minutes in space");
 add("Ground Station", "Orion Capsule", "\u{1F4AC}", "CAPCOM", "The only voice astronauts hear");
 
 // Radiation & environment
@@ -100,7 +100,7 @@ add("Event Horizon", "Velocity", "\u2728", "Hawking Radiation", "Even black hole
 // Crew members
 add("Crew Module", "Burn", "\u{1F468}\u200D\u{1F680}", "Commander Wiseman", "Reid Wiseman \u2014 leading the way back to the Moon");
 add("Crew Module", "Vector", "\u{1F468}\u200D\u{1F680}", "Pilot Glover", "Victor Glover \u2014 hands on the stick");
-add("Crew Module", "Orbital Mechanics", "\u{1F469}\u200D\u{1F680}", "MS Koch", "Christina Koch \u2014 spacewalk record holder");
+add("Crew Module", "Orbital Mechanics", "\u{1F469}\u200D\u{1F680}", "MS Koch", "Christina Koch \u2014 328-day spaceflight record holder");
 add("Crew Module", "Trajectory", "\u{1F468}\u200D\u{1F680}", "MS Hansen", "Jeremy Hansen \u2014 Canada's Moon voyager");
 add("Commander Wiseman", "Pilot Glover", "\u{1F91D}", "Crew Handshake", "Trust built in zero gravity");
 add("MS Koch", "MS Hansen", "\u{1F469}\u200D\u{1F52C}", "Science Team", "The experiments ride along");
@@ -126,7 +126,7 @@ add("Rapid Unscheduled Disassembly", "Orbit", "\u{1F6F8}", "Space Debris", "Kess
 add("Space Debris", "Orbit", "\u26A0\uFE0F", "Kessler Syndrome", "One crash creates a thousand");
 add("Explosion", "Gravity", "\u{1F30B}", "Rocket Equation", "The cruel math of leaving Earth");
 add("Communication Blackout", "Reentry", "\u{1F4F4}", "Radio Silence", "The scariest four minutes for mission control");
-add("Splashdown", "Crew Module", "\u{1F389}", "Recovery", "USS Portland standing by");
+add("Splashdown", "Crew Module", "\u{1F389}", "Recovery", "Navy recovery ship standing by");
 add("Mission Complete", "Recovery", "\u{1F3C5}", "Moon Mission Badge", "Earned, not given");
 add("Alien Contact", "CAPCOM", "\u{1F4E2}", "First Contact Protocol", "We come in peace... probably");
 add("Warp Drive", "Alien Contact", "\u{1F320}", "Federation", "To boldly go where no one has gone before");
