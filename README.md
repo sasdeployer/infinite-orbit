@@ -46,7 +46,7 @@ Open [Claude Code](https://claude.ai/code) and say:
 
 You'll get a live URL. That's it.
 
-Claude reads the config, builds the container, deploys the game on a CPU and the AI model on a GPU, wires them together, and hands you the link.
+Claude builds your container and talks to Nexlayer's deployment agents, which handle the infrastructure — spinning up the CPU and GPU pods, wiring the networking between them, and giving you a public URL.
 
 ### After it's live, keep talking:
 
