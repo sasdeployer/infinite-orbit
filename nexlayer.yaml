@@ -2,7 +2,7 @@ application:
   name: infinite-orbit
   pods:
     - name: infinite-orbit-app
-      image: registry.nexlayer.io/nexlayer-mcp/sal/infinite-orbit:latest
+      image: infinite-orbit:latest
       path: /
       servicePorts:
         - 3000
