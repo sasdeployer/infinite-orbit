@@ -1,0 +1,22 @@
+application:
+  name: infinite-orbit
+  pods:
+    - name: infinite-orbit-app
+      image: registry.nexlayer.io/nexlayer-mcp/sal/infinite-orbit:latest
+      path: /
+      servicePorts:
+        - 3000
+      vars:
+        OLLAMA_BASE_URL: "http://ollama-gpu.pod:11434"
+        OLLAMA_MODEL: "llama3.1:8b"
+        NODE_ENV: "production"
+
+    - name: ollama-gpu
+      image: ollama/ollama:latest
+      servicePorts:
+        - 11434
+      useGPU: true
+      volumes:
+        - name: models
+          mountPath: /root/.ollama
+          size: 50Gi

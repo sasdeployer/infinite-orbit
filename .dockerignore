@@ -1,0 +1,12 @@
+.git
+.gitignore
+.env
+.env.*
+node_modules
+.next
+*.md
+.DS_Store
+.vscode
+.idea
+playwright-report
+test-results
