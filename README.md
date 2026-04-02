@@ -27,7 +27,7 @@ An AI-powered orbital mechanics discovery game. Start with 4 physics primitives 
 ## Run Locally
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/infinite-orbit.git
+git clone https://github.com/sasdeployer/infinite-orbit.git
 cd infinite-orbit
 npm install
 npm run dev
@@ -48,51 +48,87 @@ ollama pull llama3.1:8b
 
 ## Deploy to Nexlayer
 
-This project is optimized for [Nexlayer](https://nexlayer.com) deployment with two pods: a CPU pod for the Next.js app and a GPU pod for Ollama.
+This project deploys to [Nexlayer](https://nexlayer.com) with two pods: a **CPU pod** for the Next.js app and a **GPU pod** for Ollama/Llama inference.
 
-### Quick Deploy
+### 1. Install the Nexlayer MCP
 
 ```bash
-npx nexlayer deploy
+npx @nexlayer/mcp-install
 ```
 
-This reads `nexlayer.yaml` and deploys both containers. The app pod connects to Ollama via Nexlayer's internal pod DNS (`http://ollama-gpu.pod:11434`).
+This gives Claude Code (or any MCP-compatible AI agent) access to Nexlayer's 47 deployment tools — from writing YAML configs to deploying containers, managing domains, and debugging live pods.
+
+### 2. Tell Claude Code What You Want
+
+Once the MCP is installed, just describe what you need in natural language. Claude handles the tool calls. Here are example prompts for each stage:
+
+#### Deploy
+
+| What you want | What to tell Claude |
+|---|---|
+| First deployment | *"Ship this app to Nexlayer"* |
+| Deploy with GPU | *"Deploy this with an Ollama GPU pod for AI inference"* |
+| Validate before deploying | *"Check my nexlayer.yaml for errors before deploying"* |
+| See what's running | *"Check the status of my deployment"* |
+| Read container logs | *"Show me the logs for the app pod"* |
+| Tear it down | *"Delete my infinite-orbit deployment"* |
+
+#### Custom Domain
+
+| What you want | What to tell Claude |
+|---|---|
+| Add your domain | *"Set up infiniteorbit.app as my custom domain"* |
+| Check DNS | *"Verify my nameservers are pointed to Nexlayer"* |
+| Fix SSL | *"My site shows a certificate error, fix it"* |
+
+#### Debug Live Pods
+
+| What you want | What to tell Claude |
+|---|---|
+| SSH into a pod | *"Open a shell into the ollama-gpu pod"* |
+| Test connectivity | *"Check if the app pod can reach Ollama on port 11434"* |
+| Inspect a stuck pod | *"The GPU pod is pending, tell me why"* |
+| Check DNS resolution | *"Test if ollama-gpu.pod resolves inside the cluster"* |
+| Read a file on a pod | *"Show me /app/server.js on the app pod"* |
+| Hot-patch a config | *"Change NODE_ENV to development on the app pod"* |
+| Restart a pod | *"Rolling restart the app deployment"* |
+| Scale up | *"Scale the app to 3 replicas"* |
+| Run a SQL query | *"Query the users table on the postgres pod"* |
+
+#### Account & Keys
+
+| What you want | What to tell Claude |
+|---|---|
+| Check your auth | *"Show me my Nexlayer JWT token"* |
+| Create an API key | *"Generate a new Nexlayer API key"* |
+| Report a bug | *"File a bug report about the GPU pod not scheduling"* |
 
 ### What Gets Deployed
 
+```
+┌─────────────────────────────────────────────────────┐
+│  Nexlayer Cluster                                   │
+│                                                     │
+│  ┌──────────────────────┐  ┌─────────────────────┐  │
+│  │  infinite-orbit-app  │  │    ollama-gpu        │  │
+│  │  ─────────────────── │  │  ─────────────────── │  │
+│  │  Next.js 16          │──│  Ollama + Llama 3.1  │  │
+│  │  Port 3000           │  │  Port 11434          │  │
+│  │  CPU pod             │  │  GPU pod (NVIDIA)    │  │
+│  └──────────────────────┘  └─────────────────────┘  │
+│         │                                           │
+│         │  Internal DNS: ollama-gpu.pod:11434        │
+│         │                                           │
+│  ┌──────┴──────────────────────────────────────┐    │
+│  │  External: https://your-app.nexlayer.ai     │    │
+│  └─────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────┘
+```
+
 | Pod | Image | Resources | Purpose |
 |-----|-------|-----------|---------|
-| `infinite-orbit-app` | Next.js standalone | CPU | Game server, API, OG images |
-| `ollama-gpu` | `ollama/ollama:latest` | GPU (NVIDIA) | Llama 3.1 8B for novel combinations |
-
-### Step-by-Step (with Claude Code + Nexlayer MCP)
-
-1. **Build the Docker image:**
-   ```bash
-   docker build --platform linux/amd64 -t registry.nexlayer.io/nexlayer-mcp/<user>/infinite-orbit:latest .
-   ```
-
-2. **Authenticate and push:**
-   ```bash
-   # Get JWT via nexlayer_get_jwt_token MCP tool
-   docker login registry.nexlayer.io -u 'tokenreview$jwt' -p <your-jwt>
-   docker push registry.nexlayer.io/nexlayer-mcp/<user>/infinite-orbit:latest
-   ```
-
-3. **Update `nexlayer.yaml`** with your registry path
-
-4. **Validate and deploy:**
-   ```bash
-   # Via Nexlayer MCP tools:
-   nexlayer_validate_yaml    # Check config
-   nexlayer_deploy           # Ship it
-   ```
-
-5. **Pull the model** into the Ollama pod after it starts:
-   ```bash
-   # Via nexlayer_debug_shell_open on the ollama-gpu pod:
-   ollama pull llama3.1:8b
-   ```
+| `infinite-orbit-app` | Next.js standalone | CPU | Game server, API, OG images, NASA tracking |
+| `ollama-gpu` | `ollama/ollama:latest` | GPU (NVIDIA) | Llama 3.1 8B for AI-generated novel combinations |
 
 ---
 
