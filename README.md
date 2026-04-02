@@ -106,17 +106,49 @@ This project was built entirely in one Claude Code session. Fork it and keep goi
 
 ---
 
+## Why No Database? Why No Embeddings?
+
+Most AI apps work like this: user input → embedding model → vector database → retrieval → LLM → response. That's a lot of infrastructure for a game.
+
+Infinite Orbit skips all of it. Here's the trick:
+
+```
+Player combines two elements
+        ↓
+   Hash map lookup (O(1), instant)
+   83 hardcoded combos cover the core game
+        ↓ miss?
+   In-memory cache lookup (O(1), instant)
+   Every combo anyone has ever tried
+        ↓ miss?
+   LLM generates a new element (one-shot, ~1 second)
+   Result gets cached forever
+        ↓
+   The LLM never answers the same question twice
+```
+
+The LLM isn't retrieving knowledge — it's **creating** it. It doesn't need to remember anything. It doesn't need context about what other players discovered. It just needs to be creative when given two physics concepts. One prompt, one answer, cached forever.
+
+**The game gets smarter as people play.** Every novel combination a player tries becomes a cached answer for the next player. The knowledge graph grows from exploration — no training, no fine-tuning, no vector database. Just a hash map that fills up over time.
+
+This is why the whole thing runs on a single Map with a 10k cap. No Postgres. No Redis. No Pinecone. The deterministic layer (hardcoded combos) handles the known universe. The LLM handles the unknown. And the cache turns unknowns into knowns.
+
+**For CS students:** this is the [cache-aside pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside) with an LLM as the fallback data source instead of a database. It's also a neat example of how you can build an AI product where inference cost approaches zero over time — because the cache hit rate only goes up.
+
+---
+
 ## How It's Built
 
-**Game:** Next.js 16, TypeScript, Tailwind CSS. Tap-tap interaction, glassmorphic cards, animated star field, SVG trajectory visualization.
+**Game:** Next.js 16, TypeScript, Tailwind CSS. Tap-tap mobile-first interaction, glassmorphic cards, animated CSS star field, SVG trajectory visualization with real milestone tracking.
 
-**AI:** Ollama running Llama 3.1 8B on a GPU. When you try a combination not in the built-in list, the AI invents a new physics concept. All outputs are sanitized and rate-limited.
+**AI:** Llama 3.1 8B running on Ollama on a GPU pod. Called only for novel combinations. All outputs sanitized (alphanumeric filter on names, emoji validation, description length cap) and rate-limited (20 req/min per IP).
 
-**Live tracking:** Real data from two NASA sources:
-- **JPL Horizons API** — Orion's computed distance from Earth and Moon
-- **DSN Now XML feed** — which ground antenna is talking to Orion right now
+**Live NASA tracking:** Two real data sources, zero API keys needed:
+- **JPL Horizons API** — computed spacecraft ephemeris (Orion's distance from Earth and Moon in km)
+- **DSN Now XML feed** — real-time Deep Space Network status (which antenna at Goldstone/Madrid/Canberra is talking to Orion, signal strength, round-trip light time)
+- **Simulated fallback** — interpolated trajectory model based on published Artemis II flight plan, used when APIs are unavailable
 
-**Security:** Rate limiting (20 req/min), input validation, LLM output sanitization, security headers. No API keys, no secrets in the repo.
+**Security:** Rate limiting, input length + character validation, LLM output sanitization, security headers (X-Frame-Options DENY, nosniff, referrer policy, permissions policy). No API keys, no secrets, no `.env` required.
 
 <details>
 <summary><strong>Full file structure</strong> (click to expand)</summary>
