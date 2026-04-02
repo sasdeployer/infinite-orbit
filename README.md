@@ -1,8 +1,8 @@
 # Infinite Orbit
 
-**An AI-powered space game where you combine physics concepts to recreate NASA's Artemis II Moon mission.**
+**Combine physics concepts. Discover orbital mechanics. Recreate NASA's Artemis II Moon mission.**
 
-You start with 4 elements — Thrust, Gravity, Velocity, Angle. Tap two together and discover what they create. Chain discoveries until you've built the entire Artemis II free-return trajectory. It even tracks the real Orion spacecraft live via NASA's Deep Space Network.
+Start with 4 elements — Thrust, Gravity, Velocity, Angle. Tap two together. See what they create. Keep going until you've planned a trip to the Moon.
 
 **[Play it now](https://zen-antelope-infinite-orbit.cluster-se1-us.nexlayer.ai)** — no sign-up, works on your phone.
 
@@ -10,7 +10,7 @@ You start with 4 elements — Thrust, Gravity, Velocity, Angle. Tap two together
 
 ---
 
-## What You'll Discover
+## The Game
 
 ```
 🔥 Thrust  + 📐 Angle     →  🚀 Burn
@@ -20,138 +20,103 @@ You start with 4 elements — Thrust, Gravity, Velocity, Angle. Tap two together
 🏆 Artemis + 🔧 Delta-V   →  🌟 Mission Complete!
 ```
 
-83 real orbital mechanics concepts, from basic burns to gravity assists. Plus easter eggs — try combining Gravity + Gravity or Burn + Burn.
+83 real orbital mechanics concepts — from basic burns to three-body problems. Every combination teaches you something real about how space travel works. You'll learn what a Hohmann Transfer is before you realize you're learning.
+
+Easter eggs too. Try Gravity + Gravity. Or Burn + Burn. Or keep going until you find Spaghettification.
+
+**Live NASA tracking** — the game pulls Orion's actual position from JPL Horizons and shows which Deep Space Network antenna is talking to the spacecraft right now. You're playing a puzzle while a real crew is flying the real mission.
 
 ---
 
 ## Deploy Your Own
 
-Two steps. No local setup needed.
+Two steps. No local setup, no DevOps knowledge needed.
 
-### Step 1: Give Claude Code the Nexlayer plugin
+### 1. Give Claude Code the Nexlayer plugin
 
 ```bash
 npx @nexlayer/mcp-install
 ```
 
-This lets Claude Code deploy apps to the cloud for you.
-
-### Step 2: Tell Claude to ship it
+### 2. Tell Claude to ship it
 
 Open [Claude Code](https://claude.ai/code) and say:
 
 > *"Deploy https://github.com/sasdeployer/infinite-orbit to Nexlayer"*
 
-That's it. Claude will clone the repo, build the Docker image, push it, and deploy it. You'll get a live URL in under 2 minutes.
+You'll get a live URL. That's it.
 
-### What Claude does behind the scenes
+Claude reads the config, builds the container, deploys the game on a CPU and the AI model on a GPU, wires them together, and hands you the link.
 
-You don't need to know any of this — Claude handles it. But if you're curious:
-
-- Reads the `nexlayer.yaml` config file in the repo
-- Builds a Docker image from the `Dockerfile`
-- Pushes it to Nexlayer's container registry
-- Deploys two containers: your game on a CPU, the AI model on a GPU
-- Connects them over a private network
-- Gives you a public `https://your-app.nexlayer.ai` URL
-
-```
-┌─────────────────────────────────────────────────────┐
-│  Nexlayer Cloud                                     │
-│                                                     │
-│  ┌──────────────────────┐  ┌─────────────────────┐  │
-│  │  infinite-orbit-app  │  │    ollama-gpu        │  │
-│  │  ─────────────────── │  │  ─────────────────── │  │
-│  │  Next.js 16          │──│  Ollama + Llama 3.1  │  │
-│  │  Port 3000           │  │  Port 11434          │  │
-│  │  CPU                 │  │  GPU (NVIDIA)        │  │
-│  └──────────────────────┘  └─────────────────────┘  │
-│         │                                           │
-│         │  They talk via: ollama-gpu.pod:11434       │
-│         │                                           │
-│  ┌──────┴──────────────────────────────────────┐    │
-│  │  Your URL: https://your-app.nexlayer.ai     │    │
-│  └─────────────────────────────────────────────┘    │
-└─────────────────────────────────────────────────────┘
-```
-
-### After it's deployed, you can keep talking to Claude:
+### After it's live, keep talking:
 
 | What you want | Say this |
 |---|---|
 | Check if it's working | *"Check the status of my deployment"* |
-| Something broke | *"Show me the logs for the app pod"* |
+| Something broke | *"Show me the logs"* |
 | Use your own domain | *"Set up infiniteorbit.app as my custom domain"* |
-| SSL not working | *"My site shows a certificate error, fix it"* |
-| SSH into a container | *"Open a shell into the ollama-gpu pod"* |
-| Pod won't start | *"The GPU pod is pending, tell me why"* |
-| Restart it | *"Rolling restart the app deployment"* |
+| Peek inside a container | *"Open a shell into the app pod"* |
+| Restart it | *"Rolling restart the deployment"* |
 | Take it down | *"Delete my infinite-orbit deployment"* |
 
 ---
 
 ## Make It Your Own
 
-This project was built entirely in one Claude Code session. Fork it and keep going:
+Fork it. Open it in Claude Code. Tell it what you want.
 
-1. Fork this repo
-2. Open it in [Claude Code](https://claude.ai/code)
-3. Claude reads `CLAUDE.md` and knows the full architecture
-4. Tell it what you want:
-   - *"Add a combination for Solar Sails"*
-   - *"Change the color scheme to red and orange"*
-   - *"Add a leaderboard"*
-   - *"Make it track the ISS instead of Artemis"*
-   - *"Deploy my fork to Nexlayer"*
+- *"Add combinations for solar sails and ion engines"*
+- *"Change the theme to Mars colonization"*
+- *"Add a multiplayer leaderboard"*
+- *"Make it track the ISS instead of Artemis"*
+- *"Deploy my fork to Nexlayer"*
+
+Claude reads `CLAUDE.md` and knows the full architecture — every file, every design decision, every gotcha.
 
 ---
 
-## Why No Database? Why No Embeddings?
+## How It Works Under the Hood
 
-Most AI apps work like this: user input → embedding model → vector database → retrieval → LLM → response. That's a lot of infrastructure for a game.
+The interesting design choice: **there's no database and no embeddings.**
 
-Infinite Orbit skips all of it. Here's the trick:
+Most AI apps pipe everything through a RAG stack — embeddings, vector search, retrieval, then the LLM. This game doesn't need any of that because the input is constrained. Players can only combine two named elements. That means:
+
+- **83 core combinations are hardcoded** in a hash map. Instant lookup, zero AI cost. This covers the entire Artemis II win path.
+- **Novel combinations hit the LLM once**, and the result gets cached. The structured input (two nouns in, one noun out) makes LLM outputs consistent enough to cache as facts.
+- **The LLM is never called twice for the same pair.** Every player who tries "Black Hole + Velocity" after the first one gets the cached answer instantly.
+
+The game's universe grows from player curiosity. No training, no fine-tuning. Just a cache that fills up.
 
 ```
-Player combines two elements
-        ↓
-   Hash map lookup (O(1), instant)
-   83 hardcoded combos cover the core game
-        ↓ miss?
-   In-memory cache lookup (O(1), instant)
-   Every combo anyone has ever tried
-        ↓ miss?
-   LLM generates a new element (one-shot, ~1 second)
-   Result gets cached forever
-        ↓
-   The LLM never answers the same question twice
+┌──────────────────────────────────────────────────────────┐
+│  Nexlayer Cloud                                          │
+│                                                          │
+│  ┌────────────────────┐       ┌───────────────────────┐  │
+│  │  Game (CPU)        │       │  AI Model (GPU)       │  │
+│  │  ────────────────  │       │  ───────────────────  │  │
+│  │  Next.js 16        │──────▶│  Llama 3.1 8B         │  │
+│  │  83 hardcoded      │  only │  via Ollama           │  │
+│  │  combos + cache    │  on   │                       │  │
+│  │  NASA tracking     │  miss │  Called only for       │  │
+│  │  Rate limiting     │       │  novel combinations   │  │
+│  └────────────────────┘       └───────────────────────┘  │
+│          │                                               │
+│  ┌───────┴────────────────────────────────────────────┐  │
+│  │  https://your-app.nexlayer.ai                      │  │
+│  └────────────────────────────────────────────────────┘  │
+└──────────────────────────────────────────────────────────┘
 ```
 
-The LLM isn't retrieving knowledge — it's **creating** it. It doesn't need to remember anything. It doesn't need context about what other players discovered. It just needs to be creative when given two physics concepts. One prompt, one answer, cached forever.
+**Live data sources (no API keys needed):**
 
-**The game gets smarter as people play.** Every novel combination a player tries becomes a cached answer for the next player. The knowledge graph grows from exploration — no training, no fine-tuning, no vector database. Just a hash map that fills up over time.
-
-This is why the whole thing runs on a single Map with a 10k cap. No Postgres. No Redis. No Pinecone. The deterministic layer (hardcoded combos) handles the known universe. The LLM handles the unknown. And the cache turns unknowns into knowns.
-
-**For CS students:** this is the [cache-aside pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside) with an LLM as the fallback data source instead of a database. It's also a neat example of how you can build an AI product where inference cost approaches zero over time — because the cache hit rate only goes up.
-
----
-
-## How It's Built
-
-**Game:** Next.js 16, TypeScript, Tailwind CSS. Tap-tap mobile-first interaction, glassmorphic cards, animated CSS star field, SVG trajectory visualization with real milestone tracking.
-
-**AI:** Llama 3.1 8B running on Ollama on a GPU pod. Called only for novel combinations. All outputs sanitized (alphanumeric filter on names, emoji validation, description length cap) and rate-limited (20 req/min per IP).
-
-**Live NASA tracking:** Two real data sources, zero API keys needed:
-- **JPL Horizons API** — computed spacecraft ephemeris (Orion's distance from Earth and Moon in km)
-- **DSN Now XML feed** — real-time Deep Space Network status (which antenna at Goldstone/Madrid/Canberra is talking to Orion, signal strength, round-trip light time)
-- **Simulated fallback** — interpolated trajectory model based on published Artemis II flight plan, used when APIs are unavailable
-
-**Security:** Rate limiting, input length + character validation, LLM output sanitization, security headers (X-Frame-Options DENY, nosniff, referrer policy, permissions policy). No API keys, no secrets, no `.env` required.
+| Source | What it provides | Updates |
+|--------|-----------------|---------|
+| JPL Horizons | Orion's distance from Earth and Moon | Hourly |
+| DSN Now | Which ground antenna is talking to Orion | Every 5 seconds |
+| Simulated trajectory | Fallback based on published flight plan | Real-time |
 
 <details>
-<summary><strong>Full file structure</strong> (click to expand)</summary>
+<summary><strong>Full file structure</strong></summary>
 
 ```
 infinite-orbit/
@@ -171,7 +136,7 @@ infinite-orbit/
 │   ├── tracking.ts             # NASA JPL Horizons + DSN
 │   ├── game-state.ts           # Game state machine
 │   └── constants.ts            # Starting elements, milestones
-├── nexlayer.yaml               # Cloud deployment config
+├── nexlayer.yaml               # Nexlayer deployment config
 ├── Dockerfile                  # Production container build
 ├── CLAUDE.md                   # Guide for Claude Code
 └── .env.example                # Environment variables (all optional)
@@ -180,9 +145,7 @@ infinite-orbit/
 </details>
 
 <details>
-<summary><strong>Run locally</strong> (click to expand)</summary>
-
-If you want to run it on your machine instead of deploying:
+<summary><strong>Run locally instead</strong></summary>
 
 ```bash
 git clone https://github.com/sasdeployer/infinite-orbit.git
