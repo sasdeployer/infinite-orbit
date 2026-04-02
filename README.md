@@ -88,26 +88,32 @@ Most AI apps pipe everything through a RAG stack — embeddings, vector search, 
 The game's universe grows from player curiosity. No training, no fine-tuning. Just a cache that fills up.
 
 ```
-                    You
-                     │
+              ┌─────────────┐
+              │     You     │
+              └──────┬──────┘
+                     │  "Deploy this"   "Why won't the GPU pod start?"
+                     │  "Scale to 3"    "Show me the logs"
                      ▼
               ┌─────────────┐
-              │ Claude Code │  "Deploy this to Nexlayer"
-              └──────┬──────┘
-                     │ MCP tool calls
+              │ Claude Code │  Understands your intent
+              └──────┬──────┘  Calls the right Nexlayer tools
+                     │
+                     │ MCP (Model Context Protocol)
                      ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│  Nexlayer Cloud                                                  │
+│  Nexlayer Cloud ─ Agent-Native Infrastructure                    │
 │                                                                  │
 │  ┌────────────────────────────────────────────────────────────┐  │
-│  │  Nexlayer Agents                                           │  │
-│  │  ──────────────────────────────────────────────────────    │  │
-│  │  Deploy & orchestrate pods ─ Wire internal DNS networking  │  │
-│  │  Auto-heal crashed containers ─ Autoscale on traffic       │  │
-│  │  SSL certificates ─ Image registry ─ GPU scheduling        │  │
-│  │  Debug proxy ─ Shell access ─ Log streaming                │  │
+│  │  Nexlayer Agents (always running, not just at deploy)      │  │
+│  │                                                            │  │
+│  │  DEPLOY        Build images ─ Push to registry ─ Launch    │  │
+│  │  NETWORK       Wire pod-to-pod DNS ─ SSL ─ Public URLs     │  │
+│  │  HEAL          Detect crashes ─ Restart failed containers  │  │
+│  │  SCALE         Monitor traffic ─ Add/remove replicas       │  │
+│  │  SCHEDULE      Place CPU pods on CPU ─ GPU pods on GPU     │  │
+│  │  DEBUG         Proxy into pods ─ Stream logs ─ Shell in    │  │
 │  └─────────────────────┬──────────────────────────────────────┘  │
-│                        │ manages                                 │
+│                        │                                         │
 │            ┌───────────┴───────────┐                             │
 │            ▼                       ▼                             │
 │  ┌────────────────────┐  ┌───────────────────────┐              │
@@ -124,6 +130,9 @@ The game's universe grows from player curiosity. No training, no fine-tuning. Ju
 │  │  https://your-app.nexlayer.ai                              │ │
 │  └────────────────────────────────────────────────────────────┘ │
 └──────────────────────────────────────────────────────────────────┘
+
+  The infrastructure isn't a one-time deploy target.
+  It's a living system you keep talking to.
 ```
 
 **Live data sources (no API keys needed):**
