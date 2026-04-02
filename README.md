@@ -1,30 +1,32 @@
 # Infinite Orbit
 
-**Recreate NASA's Artemis II Moon mission trajectory from first principles.**
+**An AI-powered space game where you combine physics concepts to recreate NASA's Artemis II Moon mission.**
 
-An AI-powered orbital mechanics discovery game. Start with 4 physics primitives — Thrust, Gravity, Velocity, Angle — combine them to discover burns, orbits, and transfers, and build your way to the Artemis II free-return trajectory.
+You start with 4 elements — Thrust, Gravity, Velocity, Angle. Tap two together and discover what they create. Chain discoveries until you've built the entire Artemis II free-return trajectory. It even tracks the real Orion spacecraft live via NASA's Deep Space Network.
 
-**[Play Now](https://zen-antelope-infinite-orbit.cluster-se1-us.nexlayer.ai)** — no sign-up, works on mobile.
+**[Play it now](https://zen-antelope-infinite-orbit.cluster-se1-us.nexlayer.ai)** — no sign-up, works on your phone.
 
----
-
-## How It Works
-
-```
-🔥 Thrust + 📐 Angle  →  🚀 Burn
-🚀 Burn   + 🔄 Orbit  →  🔁 Hohmann Transfer
-...keep combining...    →  🏆 Artemis II Trajectory
-                        →  🌟 Mission Complete!
-```
-
-- **83 pre-seeded combinations** covering orbital mechanics, Artemis II mission elements, crew members, and easter eggs
-- **AI-generated discoveries** for novel combinations via Llama 3.1 8B (runs on GPU)
-- **Real-time NASA tracking** — live Orion position from JPL Horizons API + Deep Space Network
-- **Victory screen** with pre-filled share buttons for X and LinkedIn
+![Infinite Orbit gameplay](public/screenshot.png)
 
 ---
 
-## Run Locally
+## What You'll Discover
+
+```
+🔥 Thrust  + 📐 Angle     →  🚀 Burn
+🚀 Burn    + 🔄 Orbit     →  🔁 Hohmann Transfer
+🆙 Escape  + 📐 Angle     →  🛤️ Trans-Lunar Injection
+🪃 Free Return + 🌒 Flyby →  🏆 Artemis II Trajectory
+🏆 Artemis + 🔧 Delta-V   →  🌟 Mission Complete!
+```
+
+83 real orbital mechanics concepts, from basic burns to gravity assists. Plus easter eggs — try combining Gravity + Gravity or Burn + Burn.
+
+---
+
+## Run It Yourself
+
+**Prerequisites:** [Node.js](https://nodejs.org) 18+ (just download and install it if you don't have it)
 
 ```bash
 git clone https://github.com/sasdeployer/infinite-orbit.git
@@ -33,119 +35,123 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). The game works fully with zero configuration — all core combinations are hardcoded.
+Open [localhost:3000](http://localhost:3000). That's it — the game works immediately with all 83 combinations built in.
 
-### Optional: AI-Generated Combinations
+### Want AI-generated combinations too?
 
-Install [Ollama](https://ollama.ai), pull a model, and the app auto-connects:
+Install [Ollama](https://ollama.ai) (free, runs locally), then:
 
 ```bash
 ollama pull llama3.1:8b
-# App detects Ollama at localhost:11434 automatically
 ```
+
+Now when you try a combination that isn't in the built-in list, a local AI invents a new physics concept for you. No API keys, no cloud costs — it runs on your machine.
 
 ---
 
-## Deploy to Nexlayer
+## Deploy to the Cloud
 
-This project deploys to [Nexlayer](https://nexlayer.com) with two pods: a **CPU pod** for the Next.js app and a **GPU pod** for Ollama/Llama inference.
+This app is set up to deploy on [Nexlayer](https://nexlayer.com) — an AI-native cloud that can run your Next.js app on CPUs and the AI model on GPUs, side by side.
 
-### 1. Install the Nexlayer MCP
+### Step 1: Install the Nexlayer plugin for Claude Code
 
 ```bash
 npx @nexlayer/mcp-install
 ```
 
-This gives Claude Code (or any MCP-compatible AI agent) access to Nexlayer's 47 deployment tools — from writing YAML configs to deploying containers, managing domains, and debugging live pods.
+This connects Claude Code to Nexlayer's cloud platform. Think of it as giving Claude the ability to deploy, debug, and manage your app in the cloud — all through conversation.
 
-### 2. Tell Claude Code What You Want
+### Step 2: Ask Claude to deploy it
 
-Once the MCP is installed, just describe what you need in natural language. Claude handles the tool calls. Here are example prompts for each stage:
+Open [Claude Code](https://claude.ai/code) in this project and say:
 
-#### Deploy
+> *"Ship this app to Nexlayer"*
 
-| What you want | What to tell Claude |
+Claude will:
+- Read the `nexlayer.yaml` config
+- Build your Docker image
+- Push it to Nexlayer's registry
+- Deploy two containers (your app + the AI model)
+- Give you a live URL
+
+### That's the whole process. Here are more things you can ask:
+
+**Deploying:**
+| What you want | Say this |
 |---|---|
-| First deployment | *"Ship this app to Nexlayer"* |
-| Deploy with GPU | *"Deploy this with an Ollama GPU pod for AI inference"* |
-| Validate before deploying | *"Check my nexlayer.yaml for errors before deploying"* |
-| See what's running | *"Check the status of my deployment"* |
-| Read container logs | *"Show me the logs for the app pod"* |
-| Tear it down | *"Delete my infinite-orbit deployment"* |
+| Deploy for the first time | *"Ship this app to Nexlayer"* |
+| Check if it's healthy | *"Check the status of my deployment"* |
+| See what went wrong | *"Show me the logs for the app pod"* |
+| Take it down | *"Delete my infinite-orbit deployment"* |
 
-#### Custom Domain
-
-| What you want | What to tell Claude |
+**Custom domain:**
+| What you want | Say this |
 |---|---|
-| Add your domain | *"Set up infiniteorbit.app as my custom domain"* |
-| Check DNS | *"Verify my nameservers are pointed to Nexlayer"* |
-| Fix SSL | *"My site shows a certificate error, fix it"* |
+| Use your own domain | *"Set up infiniteorbit.app as my custom domain"* |
+| Fix SSL issues | *"My site shows a certificate error, fix it"* |
 
-#### Debug Live Pods
-
-| What you want | What to tell Claude |
+**Debugging (if something breaks):**
+| What you want | Say this |
 |---|---|
-| SSH into a pod | *"Open a shell into the ollama-gpu pod"* |
-| Test connectivity | *"Check if the app pod can reach Ollama on port 11434"* |
-| Inspect a stuck pod | *"The GPU pod is pending, tell me why"* |
-| Check DNS resolution | *"Test if ollama-gpu.pod resolves inside the cluster"* |
-| Read a file on a pod | *"Show me /app/server.js on the app pod"* |
-| Hot-patch a config | *"Change NODE_ENV to development on the app pod"* |
-| Restart a pod | *"Rolling restart the app deployment"* |
-| Scale up | *"Scale the app to 3 replicas"* |
-| Run a SQL query | *"Query the users table on the postgres pod"* |
+| SSH into a container | *"Open a shell into the ollama-gpu pod"* |
+| Figure out why a pod won't start | *"The GPU pod is pending, tell me why"* |
+| Test if services can talk to each other | *"Check if the app can reach Ollama on port 11434"* |
+| Restart everything | *"Rolling restart the app deployment"* |
 
-#### Account & Keys
-
-| What you want | What to tell Claude |
-|---|---|
-| Check your auth | *"Show me my Nexlayer JWT token"* |
-| Create an API key | *"Generate a new Nexlayer API key"* |
-| Report a bug | *"File a bug report about the GPU pod not scheduling"* |
-
-### What Gets Deployed
+### What gets deployed
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│  Nexlayer Cluster                                   │
+│  Nexlayer Cloud                                     │
 │                                                     │
 │  ┌──────────────────────┐  ┌─────────────────────┐  │
 │  │  infinite-orbit-app  │  │    ollama-gpu        │  │
 │  │  ─────────────────── │  │  ─────────────────── │  │
 │  │  Next.js 16          │──│  Ollama + Llama 3.1  │  │
 │  │  Port 3000           │  │  Port 11434          │  │
-│  │  CPU pod             │  │  GPU pod (NVIDIA)    │  │
+│  │  CPU                 │  │  GPU (NVIDIA)        │  │
 │  └──────────────────────┘  └─────────────────────┘  │
 │         │                                           │
-│         │  Internal DNS: ollama-gpu.pod:11434        │
+│         │  They talk via: ollama-gpu.pod:11434       │
 │         │                                           │
 │  ┌──────┴──────────────────────────────────────┐    │
-│  │  External: https://your-app.nexlayer.ai     │    │
+│  │  Your URL: https://your-app.nexlayer.ai     │    │
 │  └─────────────────────────────────────────────┘    │
 └─────────────────────────────────────────────────────┘
 ```
 
-| Pod | Image | Resources | Purpose |
-|-----|-------|-----------|---------|
-| `infinite-orbit-app` | Next.js standalone | CPU | Game server, API, OG images, NASA tracking |
-| `ollama-gpu` | `ollama/ollama:latest` | GPU (NVIDIA) | Llama 3.1 8B for AI-generated novel combinations |
+The app pod handles the game, the GPU pod handles AI. They communicate over Nexlayer's internal network. You get a public URL automatically.
 
 ---
 
-## Recreate with Claude Code
+## Modify It with Claude Code
 
-This entire project was built in a single Claude Code session. To recreate or extend it:
+This project was built entirely in one Claude Code session. You can keep going:
 
-1. Clone this repo
-2. Open it with [Claude Code](https://claude.ai/code)
-3. Claude will read `CLAUDE.md` and understand the full architecture
-4. Ask it to add combinations, change the theme, wire up new data sources, etc.
-
-The `CLAUDE.md` file contains the complete architecture guide, file map, design decisions, and common tasks — everything Claude needs to work on this project effectively.
+1. Open this project in [Claude Code](https://claude.ai/code)
+2. Claude reads `CLAUDE.md` and knows the full architecture
+3. Ask it anything:
+   - *"Add a combination for Solar Sails"*
+   - *"Change the color scheme to red and orange"*
+   - *"Add a leaderboard"*
+   - *"Make it track the ISS instead of Artemis"*
 
 ---
 
-## Project Structure
+## How It's Built
+
+**Game:** Next.js 16, TypeScript, Tailwind CSS. Tap-tap interaction, glassmorphic cards, animated star field, SVG trajectory visualization.
+
+**AI:** Ollama running Llama 3.1 8B locally. When you combine elements not in the hardcoded list, the AI generates a new physics concept. Sanitized and rate-limited.
+
+**Live tracking:** Pulls real data from two NASA sources:
+- **JPL Horizons API** — computed spacecraft position (distance from Earth/Moon)
+- **DSN Now XML feed** — which ground antenna is talking to Orion right now
+
+**Security:** Rate limiting, input validation, LLM output sanitization, security headers. No API keys anywhere. No secrets in the repo.
+
+<details>
+<summary><strong>Full file structure</strong> (click to expand)</summary>
 
 ```
 infinite-orbit/
@@ -159,64 +165,36 @@ infinite-orbit/
 │   └── og/route.tsx            # Dynamic OG image (1200x630)
 ├── components/
 │   ├── ClientGame.tsx          # Client-only wrapper (no SSR)
-│   ├── GameBoard.tsx           # Main game logic
-│   ├── ElementCard.tsx         # Draggable/tappable element
+│   ├── GameBoard.tsx           # Main game logic (useReducer)
+│   ├── ElementCard.tsx         # Tappable element card
 │   ├── ElementTray.tsx         # Scrollable element grid
 │   ├── CombineAnimation.tsx    # Combination slots + result
 │   ├── TrajectoryProgress.tsx  # SVG Earth→Moon progress arc
-│   ├── LiveTracker.tsx         # Real-time NASA tracking
+│   ├── LiveTracker.tsx         # Real-time NASA tracking panel
 │   ├── VictoryScreen.tsx       # Win screen + share buttons
-│   ├── ShareButtons.tsx        # X + LinkedIn share
+│   ├── ShareButtons.tsx        # Pre-filled X + LinkedIn share
 │   ├── StatsBar.tsx            # Discovery stats
-│   └── StarField.tsx           # Animated background
+│   └── StarField.tsx           # Animated background stars
 ├── lib/
-│   ├── combinations.ts         # 83 hardcoded combinations
-│   ├── cache.ts                # In-memory cache (10k cap)
-│   ├── ollama.ts               # Ollama/Llama client
-│   ├── tracking.ts             # JPL Horizons + DSN + simulation
-│   ├── game-state.ts           # useReducer state machine
-│   └── constants.ts            # Elements, milestones, colors
-├── nexlayer.yaml               # Deployment config (2 pods)
-├── Dockerfile                  # Multi-stage Next.js build
-├── CLAUDE.md                   # Claude Code project guide
-└── .env.example                # Environment variables
+│   ├── combinations.ts         # 83 hardcoded element combinations
+│   ├── cache.ts                # In-memory cache (10k entry cap)
+│   ├── ollama.ts               # Ollama AI client with sanitization
+│   ├── tracking.ts             # NASA JPL Horizons + DSN + simulation
+│   ├── game-state.ts           # Game state machine
+│   └── constants.ts            # Starting elements, milestones, colors
+├── nexlayer.yaml               # Cloud deployment config
+├── Dockerfile                  # Production container build
+├── CLAUDE.md                   # Guide for Claude Code
+└── .env.example                # Environment variables (all optional)
 ```
 
----
-
-## Security
-
-- Rate limiting: 20 requests/min per IP on `/api/combine`
-- Input validation: 80 char max, alphanumeric characters only
-- LLM output sanitization on all AI-generated content
-- Security headers: X-Frame-Options DENY, nosniff, referrer policy
-- No secrets in source code — zero API keys required
-- `.dockerignore` excludes `.git`, `.env`, `node_modules`
-
----
-
-## Live Data Sources
-
-| Source | Endpoint | Updates | Auth |
-|--------|----------|---------|------|
-| JPL Horizons | `ssd.jpl.nasa.gov/api/horizons.api` | Hourly | None |
-| DSN Now | `eyes.nasa.gov/dsn/data/dsn.xml` | ~5 seconds | None |
-| Simulated | Internal trajectory model | Real-time | N/A |
-
----
-
-## Tech Stack
-
-- **Next.js 16** (App Router, TypeScript, standalone output)
-- **Tailwind CSS v4** (CSS-based config)
-- **Ollama + Llama 3.1 8B** (local GPU inference)
-- **Nexlayer** (AI-native cloud, CPU + GPU pods)
+</details>
 
 ---
 
 ## License
 
-MIT
+MIT — do whatever you want with it.
 
 ---
 
