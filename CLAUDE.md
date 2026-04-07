@@ -11,7 +11,7 @@ Think "Infinite Craft meets Kerbal Space Program."
 ## Tech Stack
 
 - **Framework**: Next.js 16+ (App Router, TypeScript, Tailwind CSS v4)
-- **AI Backend**: Ollama (Llama 3.1 8B) via OpenAI-compatible API — runs on Nexlayer GPU pod
+- **AI Backend**: Ollama (Qwen2 0.5B) via OpenAI-compatible API — runs on Nexlayer GPU pod
 - **Caching**: In-memory Map with 10k entry cap and FIFO eviction
 - **Live Tracking**: NASA JPL Horizons API + DSN Now XML feed
 - **OG Images**: `next/og` (ImageResponse) at `/og` route
@@ -85,7 +85,7 @@ curl -o /dev/null -w "%{http_code}" http://localhost:3000/og
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `OLLAMA_BASE_URL` | `http://localhost:11434` | Ollama API endpoint. In Nexlayer: `http://ollama-gpu.pod:11434` |
-| `OLLAMA_MODEL` | `llama3.1:8b` | Model for novel combinations |
+| `OLLAMA_MODEL` | `qwen2:0.5b` | Model for novel combinations |
 | `NEXT_PUBLIC_SITE_URL` | `https://zen-antelope-infinite-orbit.cluster-se1-us.nexlayer.ai` | Used for OG absolute URLs |
 
 None of these are secrets. The app works with zero env vars set (uses hardcoded combos only).

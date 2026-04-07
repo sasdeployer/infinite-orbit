@@ -6,7 +6,7 @@ export interface OllamaResult {
 }
 
 const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL || "http://localhost:11434";
-const OLLAMA_MODEL = process.env.OLLAMA_MODEL || "llama3.1:8b";
+const OLLAMA_MODEL = process.env.OLLAMA_MODEL || "qwen2:0.5b";
 
 const SYSTEM_PROMPT = `You are the physics engine for a space exploration discovery game. When given two space/physics concepts, you determine what they combine into.
 

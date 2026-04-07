@@ -119,7 +119,7 @@ The game's universe grows from player curiosity. No training, no fine-tuning. Ju
 │  ┌────────────────────┐  ┌───────────────────────┐              │
 │  │  Game (CPU pod)    │  │  AI Model (GPU pod)   │              │
 │  │  ────────────────  │  │  ───────────────────  │              │
-│  │  Next.js 16        │─▶│  Llama 3.1 8B         │              │
+│  │  Next.js 16        │─▶│  Qwen2 0.5B           │              │
 │  │  83 hardcoded      │  │  via Ollama           │              │
 │  │  combos + cache    │  │                       │              │
 │  │  NASA tracking     │  │  Called only for       │              │
@@ -182,7 +182,7 @@ npm install
 npm run dev
 ```
 
-Requires [Node.js](https://nodejs.org) 18+. For AI combinations, install [Ollama](https://ollama.ai) and run `ollama pull llama3.1:8b`.
+Requires [Node.js](https://nodejs.org) 18+. For AI combinations, install [Ollama](https://ollama.ai) and run `ollama pull qwen2:0.5b`.
 
 </details>
 

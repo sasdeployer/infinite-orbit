@@ -8,7 +8,7 @@ application:
         - 3000
       vars:
         OLLAMA_BASE_URL: "http://ollama-gpu.pod:11434"
-        OLLAMA_MODEL: "llama3.1:8b"
+        OLLAMA_MODEL: "qwen2:0.5b"
         NODE_ENV: "production"
 
     - name: ollama-gpu
@@ -16,7 +16,3 @@ application:
       servicePorts:
         - 11434
       useGPU: true
-      volumes:
-        - name: models
-          mountPath: /root/.ollama
-          size: 50Gi
