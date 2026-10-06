@@ -10,7 +10,7 @@ ask Nexlayer for it (see "How to deploy").
 | --- | --- |
 | Name | `infinite-orbit` |
 | Repo | `https://github.com/sasdeployer/infinite-orbit` on `main` |
-| Planned | 2026-10-06T22:45:18.080Z |
+| Planned | 2026-10-06T22:47:58.799Z |
 | Registered with Nexlayer | yes |
 
 `.nexlayer/plan.lock` pins the commit this plan was written against. If HEAD
