@@ -1,0 +1,258 @@
+{
+  "schema": "nexlayer.plan.findings/2",
+  "app": "infinite-orbit",
+  "repo": "https://github.com/sasdeployer/infinite-orbit",
+  "branch": "main",
+  "analyzedAt": "2026-10-06T22:45:18.080Z",
+  "registered": true,
+  "techStack": [
+    {
+      "name": "TypeScript",
+      "kind": "language",
+      "version": "5",
+      "basis": {
+        "kind": "read",
+        "sources": [
+          "package.json",
+          "tsconfig.json"
+        ]
+      }
+    },
+    {
+      "name": "Next.js",
+      "kind": "framework",
+      "version": "16.2.2",
+      "basis": {
+        "kind": "read",
+        "sources": [
+          "package.json",
+          "next.config.ts"
+        ]
+      }
+    },
+    {
+      "name": "React",
+      "kind": "framework",
+      "version": "19.2.4",
+      "basis": {
+        "kind": "read",
+        "sources": [
+          "package.json"
+        ]
+      }
+    },
+    {
+      "name": "Tailwind CSS",
+      "kind": "framework",
+      "version": "4",
+      "basis": {
+        "kind": "read",
+        "sources": [
+          "package.json"
+        ]
+      }
+    },
+    {
+      "name": "@vercel/og",
+      "kind": "tool",
+      "version": "0.11.1",
+      "basis": {
+        "kind": "read",
+        "sources": [
+          "package.json"
+        ]
+      }
+    },
+    {
+      "name": "Playwright",
+      "kind": "tool",
+      "version": "1.59.1",
+      "basis": {
+        "kind": "read",
+        "sources": [
+          "package.json"
+        ]
+      }
+    },
+    {
+      "name": "ESLint",
+      "kind": "tool",
+      "version": "9",
+      "basis": {
+        "kind": "read",
+        "sources": [
+          "package.json",
+          "eslint.config.mjs"
+        ]
+      }
+    },
+    {
+      "name": "Docker",
+      "kind": "infra",
+      "version": "node:20-alpine multi-stage",
+      "basis": {
+        "kind": "read",
+        "sources": [
+          "Dockerfile"
+        ]
+      }
+    }
+  ],
+  "services": [
+    {
+      "name": "infinite-orbit-app",
+      "image": "infinite-orbit:latest",
+      "role": null,
+      "port": 3000,
+      "reachable": true,
+      "reachableBasis": {
+        "kind": "read",
+        "sources": [
+          "nexlayer.yaml"
+        ]
+      },
+      "envNames": [
+        "OLLAMA_BASE_URL",
+        "OLLAMA_MODEL",
+        "NODE_ENV"
+      ]
+    },
+    {
+      "name": "ollama-gpu",
+      "image": "ollama/ollama:latest",
+      "role": null,
+      "port": 11434,
+      "reachable": false,
+      "reachableBasis": {
+        "kind": "read",
+        "sources": [
+          "nexlayer.yaml"
+        ]
+      },
+      "envNames": []
+    }
+  ],
+  "secrets": [],
+  "secretsSummary": {
+    "total": 0,
+    "supplied": 0,
+    "neededFromHuman": 0
+  },
+  "codeGaps": [],
+  "buildConfig": {},
+  "deployNotes": [
+    "Single stateless pod. The repo has no database, cache or queue, so none are planned.",
+    "The Dockerfile builds with output: standalone and starts with node server.js on port 3000. Build the image from it, or use a node:20-alpine base as listed.",
+    "The pod needs outbound internet access to reach NASA JPL Horizons and DSN endpoints.",
+    "Set HOSTNAME=0.0.0.0 so the standalone server binds to all interfaces."
+  ],
+  "intent": null,
+  "fromManifest": true,
+  "live": null,
+  "legacyDocs": [],
+  "drafts": {
+    "manifest": false,
+    "by": null,
+    "dockerfiles": [],
+    "noTemplate": []
+  },
+  "productionPlan": {
+    "summary": "Infinite Orbit is a single Next.js 16 app (standalone server on port 3000) that serves the game and its API routes and calls NASA JPL Horizons and DSN over the internet. The repo's existing nexlayer.yaml also wires the app to an Ollama GPU service at ollama-gpu.pod:11434. The most important fix for production is the app's image reference: it is a local tag (infinite-orbit:latest) that the platform cannot pull, so it must point to the pushed registry image.",
+    "decisions": [
+      {
+        "topic": "services",
+        "decision": "Keep the repo's two services: the Next.js app (renamed 'app') and the ollama-gpu service on GPU at port 11434",
+        "why": "The existing nexlayer.yaml sets OLLAMA_BASE_URL to ollama-gpu.pod:11434, and lib/ollama.ts exists, so the app expects that service.",
+        "evidence": [
+          "nexlayer.yaml",
+          "lib/ollama.ts"
+        ]
+      },
+      {
+        "topic": "build",
+        "decision": "Build the app from the existing multi-stage Dockerfile and push it as registry.nexlayer.io/YOUR_USER_ID/infinite-orbit-app:planned, replacing the local image tag",
+        "why": "The Dockerfile already builds standalone output and runs node server.js. The yaml's image infinite-orbit:latest cannot be pulled at deploy.",
+        "evidence": [
+          "Dockerfile",
+          "next.config.ts",
+          "nexlayer.yaml"
+        ]
+      },
+      {
+        "topic": "networking",
+        "decision": "The app is public at path / on port 3000 with HOSTNAME=0.0.0.0 and PORT=3000 set. Ollama is reached only internally via ollama-gpu.pod:11434",
+        "why": "The standalone Next.js server must bind all interfaces to receive routed traffic.",
+        "evidence": [
+          "Dockerfile",
+          "nexlayer.yaml"
+        ]
+      },
+      {
+        "topic": "storage",
+        "decision": "Give the ollama-gpu service a 10Gi volume at /root/.ollama and pin its image to ollama/ollama:0.5.7 instead of latest",
+        "why": "Without a volume, the pulled qwen2:0.5b model is lost on every restart.",
+        "evidence": [
+          "nexlayer.yaml"
+        ]
+      },
+      {
+        "topic": "keys",
+        "decision": "No secret keys are needed. NEXT_PUBLIC_SITE_URL is set to <% URL %>",
+        "why": "No key-bearing env vars were found. NEXT_PUBLIC_SITE_URL is read by the code.",
+        "evidence": [
+          "app/layout.tsx",
+          "app/og/route.tsx"
+        ]
+      }
+    ],
+    "fix_before_production": [
+      {
+        "title": "Replace the local image tag with the registry image",
+        "why": "infinite-orbit:latest is not pullable, so the deploy fails.",
+        "where": "nexlayer.yaml",
+        "severity": "blocker"
+      },
+      {
+        "title": "Pass NEXT_PUBLIC_SITE_URL at build time",
+        "why": "NEXT_PUBLIC_* values are baked in during next build. Without it, OG and share URLs may be wrong.",
+        "where": "Dockerfile",
+        "severity": "should"
+      },
+      {
+        "title": "Pull the Ollama model on startup",
+        "why": "Without this, a fresh Ollama service has no qwen2:0.5b model and combine requests to it fail until the model is pulled.",
+        "where": "nexlayer.yaml",
+        "severity": "should"
+      },
+      {
+        "title": "Use mirror.gcr.io/library/node:20-alpine in FROM lines",
+        "why": "Docker Hub rate limits can fail the build.",
+        "where": "Dockerfile",
+        "severity": "should"
+      }
+    ],
+    "verify_after_deploy": [
+      "GET / on the app URL returns 200",
+      "GET /api/tracking returns 200 with JSON",
+      "GET /og returns an image/png",
+      "POST /api/combine with two element names returns a result"
+    ],
+    "open_questions": [
+      "Is the Ollama GPU service worth its cost, or should combinations come only from the built-in table in lib/combinations.ts?"
+    ],
+    "nexlayer_yaml": "application:\n  name: infinite-orbit\n  pods:\n    - name: app\n      image: \"registry.nexlayer.io/YOUR_USER_ID/infinite-orbit-app:planned\"\n      path: /\n      servicePorts:\n        - 3000\n      vars:\n        NODE_ENV: \"production\"\n        PORT: \"3000\"\n        HOSTNAME: \"0.0.0.0\"\n        NEXT_PUBLIC_SITE_URL: \"<% URL %>\"\n        OLLAMA_BASE_URL: \"http://ollama-gpu.pod:11434\"\n        OLLAMA_MODEL: \"qwen2:0.5b\"\n    - name: ollama-gpu\n      image: ollama/ollama:0.5.7\n      servicePorts:\n        - 11434\n      useGPU: true\n      entrypoint: \"/bin/sh\"\n      command: \"-c 'ollama serve & sleep 5; ollama pull qwen2:0.5b; wait'\"\n      vars:\n        OLLAMA_HOST: \"0.0.0.0:11434\"\n      volumes:\n        - name: ollama-models\n          size: 10Gi\n          mountPath: /root/.ollama\n",
+    "builds": [
+      {
+        "service": "app",
+        "context": ".",
+        "dockerfile": "Dockerfile",
+        "exists": true,
+        "notes": ""
+      }
+    ],
+    "yaml_valid": true,
+    "model": "anthropic/claude-opus-5.5",
+    "dropped_evidence": 0
+  },
+  "builds": []
+}

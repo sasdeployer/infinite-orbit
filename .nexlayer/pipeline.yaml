@@ -1,0 +1,27 @@
+# How this app goes from a commit to live on Nexlayer.
+# Written by Nexlayer from what it read in this repo; owned by your coding
+# agent from here. Every agent and CI runs exactly this. Secret VALUES are
+# never written here.
+app: infinite-orbit
+deploy:
+  config: nexlayer.yaml
+  environment: ~   # set by the first deploy
+  through: nexlayer-mcp          # validate -> deploy -> status; nothing deploys around it
+build:
+  []   # nothing to build: every service runs a stock image
+services:
+  - name: infinite-orbit-app
+    image: 'infinite-orbit:latest'
+    port: 3000
+    public: true   # read from `nexlayer.yaml`
+  - name: ollama-gpu
+    image: 'ollama/ollama:latest'
+    port: 11434
+    public: false   # read from `nexlayer.yaml`
+verify:                         # done means all of these pass
+  - service: infinite-orbit-app
+    status: running             # nexlayer_check_deployment_status
+  - service: ollama-gpu
+    status: running             # nexlayer_check_deployment_status
+  - url: /                       # the live URL answers 2xx/3xx with a real page
+rollback: redeploy the previous image tag from the Nexlayer deploy history
